@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drag Bubble + Hidden Fullscreen</title>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .background {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: url('https://img.freepik.com/free-vector/hand-drawn-doodle-icons-set_1308-90706.jpg') no-repeat center/cover;
+      filter: blur(14px);
+      transform: scale(1.1);
+      z-index: -2;
+    }
+
+    .overlay {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.4);
+      z-index: -1;
+    }
+
+    .chat-area {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .bubble {
+      position: absolute;
+      left: 20px;
+      top: 40%;
+      background: #202c33;
+      color: #e9edef;
+      padding: 12px 14px 22px;
+      border-radius: 12px;
+      max-width: 70%;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .bubble:active {
+      cursor: grabbing;
+    }
+
+    .bubble::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -8px;
+      border-top: 10px solid #202c33;
+      border-right: 10px solid transparent;
+    }
+
+    .time {
+      position: absolute;
+      bottom: 4px;
+      right: 8px;
+      font-size: 11px;
+      color: #aebac1;
+    }
+
+    /* Tombol fullscreen transparan */
+    .fullscreen-btn {
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      width: 80px;
+      height: 80px;
+      opacity: 0; /* benar-benar tidak terlihat */
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <div class="chat-area">
+    <div class="bubble" id="bubble">
+      "Hargai dirimu, dan jangan kau letakkan dirimu di tempat yang tidak pantas. Karena ada sebagian orang tidak mengetahui nilai emas, maka mereka menganggapnya seperti batu biasa."
+      <div class="time">12:43</div>
+    </div>
+  </div>
+
+  <!-- Tombol transparan -->
+  <button class="fullscreen-btn" onclick="toggleFullscreen()"></button>
+
+  <script>
+    const bubble = document.getElementById("bubble");
+
+    let isDragging = false;
+    let offsetY = 0;
+
+    bubble.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      offsetY = e.clientY - bubble.offsetTop;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        let newY = e.clientY - offsetY;
+
+        const maxY = window.innerHeight - bubble.offsetHeight;
+        if (newY < 0) newY = 0;
+        if (newY > maxY) newY = maxY;
+
+        bubble.style.top = newY + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    /* Touch support */
+    bubble.addEventListener("touchstart", (e) => {
+      isDragging = true;
+      offsetY = e.touches[0].clientY - bubble.offsetTop;
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (isDragging) {
+        let newY = e.touches[0].clientY - offsetY;
+
+        const maxY = window.innerHeight - bubble.offsetHeight;
+        if (newY < 0) newY = 0;
+        if (newY > maxY) newY = maxY;
+
+        bubble.style.top = newY + "px";
+      }
+    });
+
+    document.addEventListener("touchend", () => {
+      isDragging = false;
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+      } else {
+        document.exitFullscreen();
+      }
+    }
+  </script>
+
+</body>
+</html>
