@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Drag Bubble + Hidden Fullscreen</title>
+  <title>Drag Bubble + Fake Fullscreen</title>
 
   <style>
     body {
@@ -71,19 +71,27 @@
       color: #aebac1;
     }
 
-    /* Tombol fullscreen transparan */
+    /* FAKE FULLSCREEN MODE (AMAN DI IPHONE) */
+    .fullscreen-mode {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+    }
+
+    /* tombol hidden tapi tetap bisa diklik iOS */
     .fullscreen-btn {
       position: fixed;
       bottom: 0;
       right: 0;
       width: 80px;
       height: 80px;
-      opacity: 0; /* benar-benar tidak terlihat */
+      opacity: 0.01;
+      background: transparent;
       border: none;
-      cursor: pointer;
     }
   </style>
 </head>
+
 <body>
 
   <div class="background"></div>
@@ -96,7 +104,7 @@
     </div>
   </div>
 
-  <!-- Tombol transparan -->
+  <!-- tombol fullscreen -->
   <button class="fullscreen-btn" onclick="toggleFullscreen()"></button>
 
   <script>
@@ -105,6 +113,7 @@
     let isDragging = false;
     let offsetY = 0;
 
+    // DRAG (mouse)
     bubble.addEventListener("mousedown", (e) => {
       isDragging = true;
       offsetY = e.clientY - bubble.offsetTop;
@@ -126,7 +135,7 @@
       isDragging = false;
     });
 
-    /* Touch support */
+    // DRAG (touch iPhone)
     bubble.addEventListener("touchstart", (e) => {
       isDragging = true;
       offsetY = e.touches[0].clientY - bubble.offsetTop;
@@ -148,12 +157,9 @@
       isDragging = false;
     });
 
+    // FULLSCREEN AMAN IPHONE (FAKE FULLSCREEN)
     function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        document.exitFullscreen();
-      }
+      document.body.classList.toggle("fullscreen-mode");
     }
   </script>
 
